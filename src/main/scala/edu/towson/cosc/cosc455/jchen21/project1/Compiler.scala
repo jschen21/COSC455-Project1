@@ -1,6 +1,7 @@
 package edu.towson.cosc.cosc455.jchen21.project1
 
-object Compiler {
+object Compiler{
+
   var currentToken : String = ""
   var fileContents : String = ""
 
@@ -26,7 +27,7 @@ object Compiler {
       println("USAGE ERROR: wrong number of args fool!")
       System.exit(1)
     }
-    else if (! args(0).endsWith(".gtx")) {
+    else if (! args(0).endsWith(".mkd")) {
       println("USAGE ERROR: wrong extension fool!")
       System.exit(1)
     }
