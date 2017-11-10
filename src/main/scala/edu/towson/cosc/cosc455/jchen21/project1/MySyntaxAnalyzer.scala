@@ -7,21 +7,21 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def gittex(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)){
-      // add to parse tree / stack
+      parseTree()
       Compiler.Scanner.getNextToken()
       variableDefine()
       title()
       body()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
-        //add to parse tree / stack
+        parseTree()
       }
       else{
         println("SYNTAX ERROR: End tag was expected when '" + Compiler.currentToken + "' was found.")
         System.exit(1)
       }
-      if(Compiler.Scanner.hasNextToken()){
-        println("SYNTAX ERROR: Tokens found after End tag.")
-      }
+      if(Compiler.Scanner.hasNextToken()) println("SYNTAX ERROR: Tokens found after End tag.")
+      println(stack.mkString)
+      System.exit(1)
     }
     else {
       println("SYNTAX ERROR: Begin tag was expected when '" + Compiler.currentToken + "' was found.")
@@ -31,11 +31,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def paragraph(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAB)){
-      //add to parse tree / stack
+      parseTree()
       variableDefine()
       innerText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.PARAE)){
-        //add to parse tree / stack
+        parseTree()
       }
       else{
         println("SYNTAX ERROR: Paragraph End tag was expected when '" + Compiler.currentToken + "' was found.")
@@ -97,22 +97,22 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       innerText()
     }
     if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
-      //add to parse tree / stack
+      parseTree()
       innerText()
     }
   }
 
   override def link(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LINKB)){
-      //add to parse tree / stack
+      parseTree()
       reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
-        //add to parse tree
+        parseTree()
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
-          //add to parse tree / stack
+          parseTree()
           reqText()
           if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
-              //add to parse tree / stack
+            parseTree()
           }
           else{
             println("SYNTAX ERROR: Address Close tag was expected when '" + Compiler.currentToken + "' was found.")
@@ -153,10 +153,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def bold(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)){
-      //add to parse tree / stack
-      //add text
+      parseTree()
+      getText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BOLD)){
-        //add to parse tree / stack
+        parseTree()
       }
       else{
         println("SYNTAX ERROR: Closing Bold tag was expected")
@@ -169,39 +169,63 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def newline(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)){
-      //add to parse tree / stack
+      parseTree()
     }
   }
 
   override def title(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)){
-      //add to parse tree / stack
+      parseTree()
       reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
-        //add to parse tree / stack
+        parseTree()
       }
       else{
         println("SYNTAX ERROR: Closing Title tag was expected")
+        System.exit(1)
       }
     }
     else{
-      println("SYNTAX ERROR: Title tag was expected")
+      println("SYNTAX ERROR: Title tag was expected " + Compiler.currentToken + " was found")
+      System.exit(1)
     }
   }
 
-  override def variableDefine(): Unit = ???
+  override def variableDefine(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)){
+      parseTree()
+      //variable name
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
+        parseTree()
+        //set variable
+        if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
+          parseTree()
+        }
+        else{
+          println("brackete")
+          System.exit(1)
+        }
+      }
+      else{
+        println("eqsign")
+        System.exit(1)
+      }
+      variableDefine()
+    }
+  }
 
   override def image(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)){
-      //add
+      parseTree()
       reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
-        //add
+        parseTree()
+        getText()
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
-          //add
+          parseTree()
           reqText()
           if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
-            //add
+            parseTree()
           }
           else{
             println("addresse")
@@ -209,6 +233,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         }
         else{
           println("addressb")
+          println(stack)
+          System.exit(1)
         }
       }
       else{
@@ -224,39 +250,36 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def heading(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)){
-      //add
+      parseTree()
       reqText()
-    }
-    else{
-      println("heading")
     }
   }
 
   override def listItem(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)){
-      //add
+      parseTree()
       innerItem()
       listItem()
     }
   }
 
   def reqText(): Unit = {
-    while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
-      //add to parse tree / stack
+    if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+      getText()
+    }
+      else{
+      println("reqtext")
     }
   }
 
   def getText(): Unit = {
     while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
-      //add to parse tree / stack
+      parseTree()
     }
   }
 
   def parseTree(): Unit = {
     stack.push(Compiler.currentToken)
-
-    if(Compiler.Scanner.hasNextToken()){
-      Compiler.Scanner.getNextToken()
-    }
+    Compiler.Scanner.getNextToken()
   }
 }

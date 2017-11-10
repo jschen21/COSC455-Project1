@@ -14,7 +14,7 @@ object Compiler{
     readFile(args(0))
 
     Scanner.getNextToken()
-
+    Parser.gittex()
   }
 
   def readFile(file : String) = {

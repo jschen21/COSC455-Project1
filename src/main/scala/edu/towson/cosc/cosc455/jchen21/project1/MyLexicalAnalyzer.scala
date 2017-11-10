@@ -19,12 +19,14 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   override def lookUp(token : String): Boolean = {
-    return CONSTANTS.KEYWORD.contains(token.toUpperCase())
+    if(!CONSTANTS.KEYWORD.contains(token)) false
+    return true
   }
 
   override def getNextToken(): Unit = {
+    token = ""
     val c  = getChar()
-    if(c.equals('#') || c.equals('*') || c.equals('+') || c.equals('(') || c.equals(')') || c.equals('[') || c.equals(']') || c.equals('=') || CONSTANTS.validText.contains(c)){
+    if(c.equals('#') || c.equals('*') || c.equals('+') || c.equals('(') || c.equals(')') || c.equals('[') || c.equals(']') || c.equals('=') || CONSTANTS.validText.exists(x => x.equalsIgnoreCase(c.toString))){
       process()
     }
     else if(c.equals('\\')){
@@ -39,14 +41,18 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     }
   }
 
-  def hasNextToken(): Boolean = ???
+  def hasNextToken(): Boolean = {
+    if(pos == (Compiler.fileContents.length - 1)) return false
+    return true
+  }
+
 
   def getTag(): Unit ={
     addChar()
-    while(!tagEnd(nextChar)){
+    do{
       getChar()
       addChar()
-    }
+    }while(!tagEnd(nextChar))
     if(token.endsWith("\n") || token.endsWith(" ")) token = token.substring(0, token.length - 1)
     if(lookUp(token)){
       Compiler.currentToken = token
@@ -55,6 +61,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       println("LEXICAL ERROR: " + token + "' is not a valid token")
       System.exit(2)
     }
+  }
+
+  def getNonBlank(): Unit ={
+    do{
+      addChar()
+      getChar()
+    } while (isSpace())
   }
 
   def image(): Unit ={
@@ -80,6 +93,8 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       case '\n' => true
       case ' ' => true
       case '[' => true
+      case '\t' => true
       case _ => false
     }
+  def isSpace(): Boolean = nextChar == ' '
 }
