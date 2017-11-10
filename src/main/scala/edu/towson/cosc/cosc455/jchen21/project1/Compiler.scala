@@ -7,7 +7,7 @@ object Compiler{
 
   val Scanner = new MyLexicalAnalyzer
   val Parser = new MySyntaxAnalyzer
-  val SemanticAnalyzer = new MySyntaxAnalyzer
+  val SemanticAnalyzer = new MySemanticAnalyzer
 
   def main(args: Array[String]): Unit = {
     checkFile(args)
@@ -15,6 +15,7 @@ object Compiler{
 
     Scanner.getNextToken()
     Parser.gittex()
+    SemanticAnalyzer.convertToHTML()
   }
 
   def readFile(file : String) = {

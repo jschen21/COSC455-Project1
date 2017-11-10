@@ -53,13 +53,13 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       getChar()
       addChar()
     }while(!tagEnd(nextChar))
-    if(token.endsWith("\n") || token.endsWith(" ")) token = token.substring(0, token.length - 1)
+    if(token.endsWith("\n") || token.endsWith(" ") || token.endsWith("\t")) token = token.substring(0, token.length - 1)
     if(lookUp(token)){
       Compiler.currentToken = token
     }
     else{
       println("LEXICAL ERROR: " + token + "' is not a valid token")
-      System.exit(2)
+      System.exit(1)
     }
   }
 
@@ -79,7 +79,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
     }
     else{
       println("LEXICAL ERROR: '" + token + "' is not a valid token")
-      System.exit(3)
+      System.exit(1)
     }
   }
 

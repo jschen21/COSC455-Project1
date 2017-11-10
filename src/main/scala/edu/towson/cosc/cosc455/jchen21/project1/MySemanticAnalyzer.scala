@@ -8,29 +8,97 @@ class MySemanticAnalyzer {
   var stack = Compiler.Parser.stack
   var currentToken : String = ""
   var convertStack = Stack[String]()
+  var tempStack = Stack[String]()
 
   def convertToHTML(): Unit = {
     while(!stack.isEmpty){
       currentToken = stack.pop()
       gittexToHtml()
     }
+    println(convertStack.mkString)
     html = convertStack.mkString
 
-    openHTMLFileInBrowser("file.html")
   }
 
   def gittexToHtml(): Unit = {
-    html.toUpperCase() match{
-      case CONSTANTS.DOCB =>
-      case CONSTANTS.PARAB =>
-      case CONSTANTS.PARAE =>
-      case CONSTANTS.BRACKETE =>
-      case CONSTANTS.ADDRESSE =>
-      case CONSTANTS.BOLD =>
-      case CONSTANTS.NEWLINE =>
-      case CONSTANTS.DOCE =>
-      case _ =>
+    if(currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) convertStack.push("<html>\n")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) convertStack.push("<p>")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) convertStack.push("</p>")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) titleOrVar()
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) endOfAddress()
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
+
     }
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) convertStack.push("</html>")
+    else convertStack.push(currentToken)
+  }
+
+  def titleOrVar(): Unit = {
+    while(stack.top.charAt(0) != '\\'){
+      tempStack.push(stack.pop())
+    }
+    val tag: String = stack.pop()
+    if(tag.equalsIgnoreCase(CONSTANTS.TITLEB)) title()
+    else if (tag.equalsIgnoreCase(CONSTANTS.DEFB)) variableDef()
+    else if(tag.equalsIgnoreCase(CONSTANTS.USEB)) variableUSe()
+  }
+
+  def title(): Unit = {
+    var title: String = ""
+    while(!tempStack.isEmpty){
+      title = title + tempStack.pop
+    }
+    convertStack.push("<head>\n\t<title>" + title + "</title>\n</head>")
+  }
+  def variableDef(): Unit = {}
+  def variableUSe(): Unit = {
+    val varName = tempStack.pop()
+    if(!tempStack.isEmpty) tempStack.pop()
+  }
+
+  def endOfAddress(): Unit = {
+    while(!stack.top.equalsIgnoreCase(CONSTANTS.LINKB) && !stack.top.equalsIgnoreCase(CONSTANTS.IMAGEB)){
+      tempStack.push(stack.pop())
+    }
+    val startTag = stack.pop()
+    if(startTag.equalsIgnoreCase(CONSTANTS.LINKB)) link()
+    else image()
+  }
+
+  def link(): Unit = {
+    var linkAddress: String = ""
+    var linkText: String = ""
+    var fullLinkTag: String = ""
+
+    tempStack = tempStack.reverse
+    while(!tempStack.top.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
+      linkAddress = tempStack.pop() + linkAddress
+    }
+    tempStack.pop()
+    while(!tempStack.isEmpty){
+      if(!tempStack.top.equals("]")) linkText = tempStack.pop() + linkText
+      else tempStack.pop()
+    }
+    fullLinkTag = "<a href=\"" + linkAddress + "\">" + linkText + "</a>"
+    convertStack.push(fullLinkTag)
+  }
+  def image(): Unit = {
+    var imageAddress: String = ""
+    var imageText: String = ""
+    var fullImageTag: String = ""
+
+    tempStack = tempStack.reverse
+    while(!tempStack.top.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
+      imageAddress = tempStack.pop() + imageAddress
+    }
+    tempStack.pop()
+    while(!tempStack.isEmpty){
+      if(!tempStack.top.equals("]")) imageText = tempStack.pop() + imageText
+      else tempStack.pop()
+    }
+    fullImageTag = "<img src=\"" + imageAddress + "\" alt=\"" + imageText + "\">"
+    convertStack.push(fullImageTag)
   }
 
   /* * Hack Scala/Java function to take a String filename and open in default web browswer. */

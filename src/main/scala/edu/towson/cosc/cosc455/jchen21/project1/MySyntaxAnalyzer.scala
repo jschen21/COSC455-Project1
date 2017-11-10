@@ -20,8 +20,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         System.exit(1)
       }
       if(Compiler.Scanner.hasNextToken()) println("SYNTAX ERROR: Tokens found after End tag.")
-      println(stack.mkString)
-      System.exit(1)
+      println(stack)
+
     }
     else {
       println("SYNTAX ERROR: Begin tag was expected when '" + Compiler.currentToken + "' was found.")
