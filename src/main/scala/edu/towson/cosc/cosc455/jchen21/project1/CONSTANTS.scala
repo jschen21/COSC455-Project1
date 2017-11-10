@@ -25,6 +25,7 @@ object CONSTANTS {
   val whiteSpace : List[String] = List(" ", "\t", "\n", "\b","\f","\r")
   val validText : List[String] = whiteSpace ::: letters ::: numbersEtc
 
-  val innerText = List(USEB, HEADING, BOLD, LISTITEM, IMAGEB, LINKB) ::: validText
+  val SPECIALSYMBOLS = List('*', '+', '=', '\\', '!', '#', '[', ']', '(', ')')
+  val innerText: List[String] = List(USEB, HEADING, BOLD, LISTITEM, IMAGEB, LINKB) ::: validText
   val KEYWORD : List[String] = List(DOCB, DOCE, TITLEB, BRACKETE, HEADING, PARAB, PARAE, BOLD, LISTITEM, NEWLINE, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQSIGN, USEB)
 }

@@ -191,13 +191,54 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   override def variableDefine(): Unit = ???
 
-  override def image(): Unit = ???
+  override def image(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)){
+      //add
+      reqText()
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
+        //add
+        if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSB)){
+          //add
+          reqText()
+          if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)){
+            //add
+          }
+          else{
+            println("addresse")
+          }
+        }
+        else{
+          println("addressb")
+        }
+      }
+      else{
+        println("brackete")
+      }
+    }
+    else{
+      println("imageb")
+    }
+  }
 
   override def variableUse(): Unit = ???
 
-  override def heading(): Unit = ???
+  override def heading(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)){
+      //add
+      reqText()
+    }
+    else{
+      println("heading")
+    }
+  }
 
-  override def listItem(): Unit = ???
+  override def listItem(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)){
+      //add
+      innerItem()
+      listItem()
+    }
+  }
 
   def reqText(): Unit = {
     while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
