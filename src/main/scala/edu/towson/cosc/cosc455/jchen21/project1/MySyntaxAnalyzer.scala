@@ -1,4 +1,5 @@
 package edu.towson.cosc.cosc455.jchen21.project1
+
 import scala.collection.mutable.Stack
 
 class MySyntaxAnalyzer extends SyntaxAnalyzer{
@@ -20,7 +21,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         error()
       }
       docEndChecker()
-      println(stack)
+      print(stack)
     }
     else {
       error()
@@ -185,6 +186,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)){
       parseTree()
       addVar()
+      getText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
         parseTree()
         addVar()
@@ -192,7 +194,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
           parseTree()
         }
         else{
-          System.exit(1)
+          error()
         }
       }
       else{
@@ -294,7 +296,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   }
 
   def error(): Unit = {
-    println("SYNTAX ERROR: " + Compiler.currentToken + " is not supposed to be there")
+    println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " is not supposed to be there")
     System.exit(1)
   }
 }

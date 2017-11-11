@@ -8,14 +8,17 @@ object Compiler{
   val Scanner = new MyLexicalAnalyzer
   val Parser = new MySyntaxAnalyzer
   val SemanticAnalyzer = new MySemanticAnalyzer
+  var fileName: String = ""
 
   def main(args: Array[String]): Unit = {
     checkFile(args)
     readFile(args(0))
 
+    fileName = args(0).substring(0, args(0).length - 4)
+
     Scanner.getNextToken()
     Parser.gittex()
-    SemanticAnalyzer.convertToHTML()
+    SemanticAnalyzer.toHTML()
   }
 
   def readFile(file : String) = {

@@ -1,6 +1,5 @@
 package edu.towson.cosc.cosc455.jchen21.project1
 
-
 class MyLexicalAnalyzer extends LexicalAnalyzer {
   var token : String = ""
   var nextChar: Char = 0
@@ -64,7 +63,6 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
 
   def getNonBlank(): Unit ={
     do{
-      addChar()
       getChar()
     } while (isSpace())
   }
