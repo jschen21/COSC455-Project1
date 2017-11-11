@@ -20,6 +20,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         error()
       }
       docEndChecker()
+      println(stack)
     }
     else {
       error()
@@ -183,10 +184,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   override def variableDefine(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)){
       parseTree()
-      //variable name
+      addVar()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
         parseTree()
-        //set variable
+        addVar()
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
           parseTree()
         }
@@ -231,7 +232,14 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
   }
 
-  override def variableUse(): Unit = ???
+  override def variableUse(): Unit = {
+    if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.USEB)){
+      parseTree()
+      addVar()
+      if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) parseTree()
+      else error()
+    }
+  }
 
   override def heading(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.HEADING)){
@@ -254,6 +262,15 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         println("SYNTAX ERROR: Tokens found after End tag.")
         System.exit(1)
       }
+  }
+
+  def addVar(): Unit = {
+    var variable: String = ""
+    while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+      if(!CONSTANTS.whiteSpace.exists(x => x.equalsIgnoreCase(Compiler.currentToken))) variable += Compiler.currentToken
+      Compiler.Scanner.getNextToken()
+    }
+    stack.push(variable)
   }
 
   def reqText(): Unit = {

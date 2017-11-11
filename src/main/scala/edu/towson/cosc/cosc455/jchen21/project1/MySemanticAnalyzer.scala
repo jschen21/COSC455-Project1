@@ -9,6 +9,7 @@ class MySemanticAnalyzer {
   var currentToken : String = ""
   var convertStack = Stack[String]()
   var tempStack = Stack[String]()
+  var boldTag: Int = 0
 
   def convertToHTML(): Unit = {
     while(!stack.isEmpty){
@@ -23,12 +24,11 @@ class MySemanticAnalyzer {
   def gittexToHtml(): Unit = {
     if(currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) convertStack.push("<html>\n")
     else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) convertStack.push("<p>")
-    else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) convertStack.push("</p>")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) convertStack.push("</p>\n")
     else if(currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) titleOrVar()
     else if(currentToken.equalsIgnoreCase(CONSTANTS.ADDRESSE)) endOfAddress()
-    else if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
-
-    }
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) bold()
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM) || currentToken.equalsIgnoreCase(CONSTANTS.HEADING)) headOrList()
     else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>\n")
     else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) convertStack.push("</html>")
     else convertStack.push(currentToken)
@@ -99,6 +99,37 @@ class MySemanticAnalyzer {
     }
     fullImageTag = "<img src=\"" + imageAddress + "\" alt=\"" + imageText + "\">"
     convertStack.push(fullImageTag)
+  }
+
+  def bold(): Unit = {
+    if(boldTag == 0){
+      convertStack.push("</b>")
+      boldTag = 1
+    }
+    else{
+      convertStack.push("<b>")
+      boldTag = 0
+    }
+  }
+
+  def headOrList(): Unit = {
+    while(!stack.top.equals("#") && !stack.top.equals("+")){
+      tempStack.push(stack.pop())
+    }
+    val startTag: String = stack.pop()
+    if(startTag.equals("#")) heading()
+    else list()
+  }
+
+  def heading(): Unit = {
+    var heading: String = ""
+    while(!tempStack.isEmpty) heading = heading + tempStack.pop()
+    println(heading)
+    convertStack.push("<h1>" + heading + "</h1>")
+  }
+
+  def list(): Unit = {
+
   }
 
   /* * Hack Scala/Java function to take a String filename and open in default web browswer. */
