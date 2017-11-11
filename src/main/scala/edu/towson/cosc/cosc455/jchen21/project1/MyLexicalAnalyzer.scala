@@ -19,14 +19,14 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   override def lookUp(token : String): Boolean = {
-    if(!CONSTANTS.KEYWORD.contains(token)) false
-    return true
+    if(!CONSTANTS.Keyword.exists(x => x.equalsIgnoreCase(token))) false
+    else true
   }
 
   override def getNextToken(): Unit = {
     token = ""
     val c  = getChar()
-    if(c.equals('#') || c.equals('*') || c.equals('+') || c.equals('(') || c.equals(')') || c.equals('[') || c.equals(']') || c.equals('=') || CONSTANTS.validText.exists(x => x.equalsIgnoreCase(c.toString))){
+    if(CONSTANTS.validToken.exists(x => x.equalsIgnoreCase(c.toString))){
       process()
     }
     else if(c.equals('\\')){
@@ -53,13 +53,12 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       getChar()
       addChar()
     }while(!tagEnd(nextChar))
-    if(token.endsWith("\n") || token.endsWith(" ") || token.endsWith("\t")) token = token.substring(0, token.length - 1)
+    while(CONSTANTS.whiteSpace.contains(token.substring(token.length-1))) token = token.substring(0, token.length - 1)
     if(lookUp(token)){
       Compiler.currentToken = token
     }
     else{
-      println("LEXICAL ERROR: " + token + "' is not a valid token")
-      System.exit(1)
+      error()
     }
   }
 
@@ -78,8 +77,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       Compiler.currentToken = token
     }
     else{
-      println("LEXICAL ERROR: '" + token + "' is not a valid token")
-      System.exit(1)
+      error()
     }
   }
 
@@ -97,4 +95,9 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       case _ => false
     }
   def isSpace(): Boolean = nextChar == ' '
+
+  def error(): Unit = {
+    println("LEXICAL ERROR: '" + token + "' is not a valid token")
+    System.exit(1)
+  }
 }

@@ -24,9 +24,9 @@ object CONSTANTS {
   val numbersEtc : List[String] = List("1","2","3","4","5","6","7","8","9","0",",",".","\"",":","?","_","/", "'", "")
   val whiteSpace : List[String] = List(" ", "\t", "\n", "\b","\f","\r")
   val validText : List[String] = whiteSpace ::: letters ::: numbersEtc
-  val lettersAndNumbers : List[String] = letters ::: numbersEtc
 
-  val SPECIALSYMBOLS = List('*', '+', '=', '\\', '!', '#', '[', ']', '(', ')')
+  val specialChar : List[String] = List("=","[", "]","#","*", "+", "(", ")")
+  val validToken: List[String] = validText ::: specialChar
   val innerText: List[String] = List(USEB, HEADING, BOLD, LISTITEM, IMAGEB, LINKB) ::: validText
-  val KEYWORD : List[String] = List(DOCB, DOCE, TITLEB, BRACKETE, HEADING, PARAB, PARAE, BOLD, LISTITEM, NEWLINE, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQSIGN, USEB)
+  val Keyword : List[String] = List(DOCB, DOCE, TITLEB, BRACKETE, HEADING, PARAB, PARAE, BOLD, LISTITEM, NEWLINE, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQSIGN, USEB)
 }

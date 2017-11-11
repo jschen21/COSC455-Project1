@@ -14,18 +14,15 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       body()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
         parseTree()
+        Compiler.Scanner.getNextToken()
       }
       else{
-        println("SYNTAX ERROR: End tag was expected when '" + Compiler.currentToken + "' was found.")
-        System.exit(1)
+        error()
       }
-      if(Compiler.Scanner.hasNextToken()) println("SYNTAX ERROR: Tokens found after End tag.")
-      println(stack)
-
+      docEndChecker()
     }
     else {
-      println("SYNTAX ERROR: Begin tag was expected when '" + Compiler.currentToken + "' was found.")
-      System.exit(1)
+      error()
     }
   }
 
@@ -38,13 +35,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        println("SYNTAX ERROR: Paragraph End tag was expected when '" + Compiler.currentToken + "' was found.")
-        System.exit(1)
+        error()
       }
     }
     else{
-      println("SYNTAX ERROR: Paragraph Begin tag was expected when '" + Compiler.currentToken + "' was found.")
-      System.exit(1)
+      error()
     }
   }
 
@@ -115,23 +110,19 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
             parseTree()
           }
           else{
-            println("SYNTAX ERROR: Address Close tag was expected when '" + Compiler.currentToken + "' was found.")
-            System.exit(1)
+            error()
           }
         }
         else{
-          println("SYNTAX ERROR: Address Begin tag was expected when '" + Compiler.currentToken + "' was found.")
-          System.exit(1)
+          error()
         }
       }
       else{
-        println("SYNTAX ERROR: Close Bracket tag was expected when '" + Compiler.currentToken + "' was found.")
-        System.exit(1)
+        error()
       }
     }
     else{
-      println("SYNTAX ERROR: Link Begin tag was expected when when '" + Compiler.currentToken + "' was found.")
-      System.exit(1)
+      error()
     }
   }
 
@@ -159,11 +150,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        println("SYNTAX ERROR: Closing Bold tag was expected")
+        error()
       }
     }
     else{
-      println("SYNTAX ERROR: Opening Bold tag was expected")
+      error()
     }
   }
 
@@ -181,13 +172,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        println("SYNTAX ERROR: Closing Title tag was expected")
-        System.exit(1)
+        error()
       }
     }
     else{
-      println("SYNTAX ERROR: Title tag was expected " + Compiler.currentToken + " was found")
-      System.exit(1)
+      error()
     }
   }
 
@@ -202,13 +191,11 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
           parseTree()
         }
         else{
-          println("brackete")
           System.exit(1)
         }
       }
       else{
-        println("eqsign")
-        System.exit(1)
+        error()
       }
       variableDefine()
     }
@@ -228,21 +215,19 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
             parseTree()
           }
           else{
-            println("addresse")
+            error()
           }
         }
         else{
-          println("addressb")
-          println(stack)
-          System.exit(1)
+          error()
         }
       }
       else{
-        println("brackete")
+        error()
       }
     }
     else{
-      println("imageb")
+      error()
     }
   }
 
@@ -263,12 +248,20 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
   }
 
+  def docEndChecker():Unit = {
+    Compiler.Scanner.getNextToken()
+    if (!CONSTANTS.whiteSpace.contains(Compiler.currentToken)) {
+        println("SYNTAX ERROR: Tokens found after End tag.")
+        System.exit(1)
+      }
+  }
+
   def reqText(): Unit = {
     if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
       getText()
     }
       else{
-      println("reqtext")
+      error()
     }
   }
 
@@ -281,5 +274,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   def parseTree(): Unit = {
     stack.push(Compiler.currentToken)
     Compiler.Scanner.getNextToken()
+  }
+
+  def error(): Unit = {
+    println("SYNTAX ERROR: " + Compiler.currentToken + " is not supposed to be there")
+    System.exit(1)
   }
 }

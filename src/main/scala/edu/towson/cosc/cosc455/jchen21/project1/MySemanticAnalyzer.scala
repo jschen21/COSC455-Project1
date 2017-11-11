@@ -29,7 +29,7 @@ class MySemanticAnalyzer {
     else if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
 
     }
-    else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>")
+    else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>\n")
     else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE)) convertStack.push("</html>")
     else convertStack.push(currentToken)
   }
