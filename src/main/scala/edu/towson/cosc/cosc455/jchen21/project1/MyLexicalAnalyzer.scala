@@ -24,25 +24,32 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
 
   override def getNextToken(): Unit = {
     token = ""
-    val c  = getChar()
-    if(CONSTANTS.validToken.exists(x => x.equalsIgnoreCase(c.toString))){
+    getChar()
+    getNonBlank()
+    if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(nextChar.toString))){
       process()
     }
-    else if(c.equals('\\')){
+    else  if(CONSTANTS.specialChar.contains(nextChar)){
+      addChar()
+      Compiler.currentToken = token
+    }
+    else  if(CONSTANTS.blank.contains(nextChar)) getChar()
+    else if(nextChar.equals('\\')){
       getTag()
     }
-    else if(c.equals('!')){
+    else if(nextChar.equals('!')){
       image()
     }
     else{
-      println("LEXICAL ERROR: '" + c + "' is not a valid token")
+      println("LEXICAL ERROR: '" + nextChar + "' is not a valid token")
       System.exit(1)
     }
+    println(token)
   }
 
-  def hasNextToken(): Boolean = {
-    if(pos == (Compiler.fileContents.length - 1)) return false
-    return true
+  def fileEnd(): Boolean = {
+    if(pos < Compiler.fileContents.length) false
+    else true
   }
 
 
@@ -62,9 +69,7 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
   }
 
   def getNonBlank(): Unit ={
-    do{
-      getChar()
-    } while (isSpace())
+    while ((CONSTANTS.blank.contains(nextChar) && !fileEnd)) getChar()
   }
 
   def image(): Unit ={
@@ -81,7 +86,29 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
 
   def process(): Unit = {
     addChar()
+    token += getText()
     Compiler.currentToken = token
+  }
+
+  def getText() : String = {
+    var text: String = ""
+    getChar()
+
+    while (!fileEnd() && !CONSTANTS.blank.contains(nextChar) && !CONSTANTS.specialChar.contains(nextChar)) {
+      text += nextChar
+      getChar()
+    }
+    pos = pos - 1
+    if (nextChar == '\n') {
+      getChar()
+    }
+    if (nextChar == '\r') {
+      getChar()
+      if (nextChar == '\t') {
+        text += nextChar
+      }
+    }
+    return text
   }
 
   def tagEnd(c: Char): Boolean =

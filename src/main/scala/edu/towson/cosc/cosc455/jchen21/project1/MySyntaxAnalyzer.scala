@@ -9,7 +9,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   override def gittex(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)){
       parseTree()
-      Compiler.Scanner.getNextToken()
       variableDefine()
       title()
       body()
@@ -20,11 +19,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       else{
         error()
       }
-      docEndChecker()
-      print(stack)
+      println(stack)
     }
     else {
-      error()
+      System.exit(2)
     }
   }
 
@@ -93,7 +91,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       variableUse()
       innerText()
     }
-    if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+    if(isText()){
       parseTree()
       innerText()
     }
@@ -258,14 +256,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
   }
 
-  def docEndChecker():Unit = {
-    Compiler.Scanner.getNextToken()
-    if (!CONSTANTS.whiteSpace.contains(Compiler.currentToken)) {
-        println("SYNTAX ERROR: Tokens found after End tag.")
-        System.exit(1)
-      }
-  }
-
   def addVar(): Unit = {
     var variable: String = ""
     while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
@@ -276,19 +266,28 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   }
 
   def reqText(): Unit = {
-    if(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+    if(isText()){
       getText()
     }
-      else{
+    else{
       error()
     }
   }
 
   def getText(): Unit = {
-    while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+    while(isText()){
       parseTree()
     }
   }
+
+  def isText(): Boolean = {
+    if (Compiler.currentToken.contains(':') || Compiler.currentToken.contains('.') || Compiler.currentToken.contains(',')) {
+      return true
+    }
+    if (Compiler.currentToken.contains("\n")) return Compiler.currentToken.length == Compiler.currentToken.filter(_.isLetterOrDigit).length + 1
+    Compiler.currentToken.length == Compiler.currentToken.filter(_.isLetterOrDigit).length
+  }
+
 
   def parseTree(): Unit = {
     stack.push(Compiler.currentToken)

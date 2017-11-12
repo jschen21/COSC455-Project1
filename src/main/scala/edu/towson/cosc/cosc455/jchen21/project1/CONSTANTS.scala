@@ -22,10 +22,10 @@ object CONSTANTS {
   val letters : List[String] = List("a","b","c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","w","x","y","z")
   val numbersEtc : List[String] = List("1","2","3","4","5","6","7","8","9","0",",",".","\"",":","?","_","/", "'", "")
   val whiteSpace : List[String] = List(" ", "\t", "\n", "\b","\f","\r")
-  val validText : List[String] = whiteSpace ::: letters ::: numbersEtc
+  val validText : List[String] = letters ::: numbersEtc
 
-  val specialChar : List[String] = List("=","[", "]","#","*", "+", "(", ")")
-  val validToken: List[String] = validText ::: specialChar
+  val blank: List[Char] = List(' ', '\t', '\n', '\b','\f','\r')
+  val specialChar : List[Char] = List('=','[', ']','#','*', '+', '(', ')')
   val innerText: List[String] = List(USEB, HEADING, BOLD, LISTITEM, IMAGEB, LINKB) ::: validText
   val Keyword : List[String] = List(DOCB, DOCE, TITLEB, BRACKETE, HEADING, PARAB, PARAE, BOLD, LISTITEM, NEWLINE, LINKB, ADDRESSB, ADDRESSE, IMAGEB, DEFB, EQSIGN, USEB)
 }

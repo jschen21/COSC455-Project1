@@ -29,7 +29,7 @@ class MySemanticAnalyzer {
       else if(currentToken.equalsIgnoreCase(CONSTANTS.LINKB)) link()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)) image()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>\n")
-      else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE))convertStack.push("</html>\n")
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE))convertStack.push("\n</html>")
     } while (stack.nonEmpty)
 while(convertStack.nonEmpty) {
   outputStack.push(convertStack.pop())
@@ -53,8 +53,10 @@ while(convertStack.nonEmpty) {
 
   def heading():Unit = {
     var heading: String = ""
-    while(!stack.top.equals("\n")){
-      tempStack.push(stack.pop())
+    currentToken = stack.pop()
+    while(!CONSTANTS.Keyword.contains(currentToken)){
+      tempStack.push(currentToken + " ")
+      currentToken = stack.pop()
     }
     while(tempStack.nonEmpty){
       heading = tempStack.pop() + heading
@@ -75,8 +77,10 @@ while(convertStack.nonEmpty) {
 
   def list(): Unit = {
     var listItem: String = ""
-    while(!stack.top.equals("\n")){
-      tempStack.push(stack.pop())
+    currentToken = stack.pop()
+    while(!CONSTANTS.Keyword.contains(currentToken)){
+      tempStack.push(currentToken + " ")
+      currentToken = stack.pop()
     }
     while(tempStack.nonEmpty){
       listItem = tempStack.pop() + listItem
