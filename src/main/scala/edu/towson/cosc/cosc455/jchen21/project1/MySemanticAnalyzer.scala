@@ -16,7 +16,7 @@ class MySemanticAnalyzer {
 
   def toHTML(): Unit = {
     stack = stack.reverse
-    do{
+    while (stack.nonEmpty){
       currentToken = stack.pop()
       if (currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) convertStack.push("<html>\n")
       else if(currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)) title()
@@ -30,9 +30,10 @@ class MySemanticAnalyzer {
       else if(currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)) image()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>\n")
       else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE))convertStack.push("\n</html>")
-    } while (stack.nonEmpty)
+      else convertStack.push(currentToken)
+    }
 while(convertStack.nonEmpty) {
-  outputStack.push(convertStack.pop())
+  outputStack.push(convertStack.pop() + " ")
 }
     html = outputStack.mkString
     println(html)
@@ -45,6 +46,7 @@ while(convertStack.nonEmpty) {
     while(!stack.top.equals("]")){
       tempStack.push(stack.pop())
     }
+    stack.pop()
     while(tempStack.nonEmpty){
       title = tempStack.pop() + title
     }
@@ -66,11 +68,11 @@ while(convertStack.nonEmpty) {
 
   def bold(): Unit = {
     if(boldTag == 0){
-      convertStack.push("<b>")
+      convertStack.push("</b>")
       boldTag = 1
     }
     else{
-      convertStack.push("</b>")
+      convertStack.push("<b>")
       boldTag = 0
     }
   }
@@ -106,6 +108,7 @@ while(convertStack.nonEmpty) {
     while(!stack.top.equals(")")){
       tempStack.push(stack.pop())
     }
+    stack.pop()
     while(tempStack.nonEmpty){
       linkAddress = tempStack.pop() + linkAddress
     }
@@ -131,6 +134,7 @@ while(convertStack.nonEmpty) {
     while(!stack.top.equals(")")){
       tempStack.push(stack.pop())
     }
+    stack.pop()
     while(tempStack.nonEmpty){
       imageAddress = tempStack.pop() + imageAddress
     }

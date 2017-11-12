@@ -44,7 +44,6 @@ class MyLexicalAnalyzer extends LexicalAnalyzer {
       println("LEXICAL ERROR: '" + nextChar + "' is not a valid token")
       System.exit(1)
     }
-    println(token)
   }
 
   def fileEnd(): Boolean = {
