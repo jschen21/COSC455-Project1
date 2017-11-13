@@ -183,11 +183,10 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   override def variableDefine(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DEFB)){
       parseTree()
-      addVar()
-      getText()
+      reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.EQSIGN)){
         parseTree()
-        addVar()
+        reqText()
         if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)){
           parseTree()
         }
@@ -235,7 +234,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   override def variableUse(): Unit = {
     if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.USEB)){
       parseTree()
-      addVar()
+      reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) parseTree()
       else error()
     }
@@ -256,15 +255,6 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
     }
   }
 
-  def addVar(): Unit = {
-    var variable: String = ""
-    while(CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
-      if(!CONSTANTS.whiteSpace.exists(x => x.equalsIgnoreCase(Compiler.currentToken))) variable += Compiler.currentToken
-      Compiler.Scanner.getNextToken()
-    }
-    stack.push(variable)
-  }
-
   def reqText(): Unit = {
     if(isText()){
       getText()
@@ -281,7 +271,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   }
 
   def isText(): Boolean = {
-    if (Compiler.currentToken.contains(':') || Compiler.currentToken.contains('.') || Compiler.currentToken.contains(',')) {
+    if (Compiler.currentToken.contains(":") || Compiler.currentToken.contains(".") || Compiler.currentToken.contains(",")) {
       return true
     }
     if (Compiler.currentToken.contains("\n")) return Compiler.currentToken.length == Compiler.currentToken.filter(_.isLetterOrDigit).length + 1
