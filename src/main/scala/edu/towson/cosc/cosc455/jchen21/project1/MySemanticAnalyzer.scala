@@ -12,24 +12,39 @@ class MySemanticAnalyzer {
   var convertStack = Stack[String]()
   var outputStack = Stack[String]()
   var tempStack = Stack[String]()
+  var variableStack = Stack[String]()
+  var variableTemp = Stack[String]()
   var boldTag: Int = 0
 
   def toHTML(): Unit = {
     stack = stack.reverse
     while (stack.nonEmpty){
       currentToken = stack.pop()
-      if (currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) convertStack.push("<html>\n")
+      if (currentToken.equalsIgnoreCase(CONSTANTS.DOCB)) {
+        variableStack.push(currentToken)
+        convertStack.push("<html>\n")
+      }
       else if(currentToken.equalsIgnoreCase(CONSTANTS.TITLEB)) title()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.HEADING)) heading()
-      //else if(currentToken.equalsIgnoreCase(CONSTANTS.DEFB))
-      else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAB)) convertStack.push("<p>")
-      else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAE)) convertStack.push("</p>\n")
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.DEFB)) variableDef()
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.USEB)) variableUse()
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAB)){
+        variableStack.push(currentToken)
+        convertStack.push("\n<p>")
+      }
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.PARAE)){
+        variableStack.push(currentToken)
+        convertStack.push("</p>\n")
+      }
       else if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) bold()
       else if (currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)) list()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.LINKB)) link()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.IMAGEB)) image()
       else if(currentToken.equalsIgnoreCase(CONSTANTS.NEWLINE)) convertStack.push("<br>\n")
-      else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE))convertStack.push("\n</html>")
+      else if(currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
+        variableStack.push(currentToken)
+        convertStack.push("\n</html>")
+      }
       else convertStack.push(currentToken)
     }
 while(convertStack.nonEmpty) {
@@ -66,13 +81,49 @@ while(convertStack.nonEmpty) {
     convertStack.push("<h1>" + heading + "</h1>\n")
   }
 
+  def variableDef(): Unit = {
+    variableStack.push(stack.pop())
+    stack.pop()
+    variableStack.push(stack.pop())
+    stack.pop()
+  }
+
+  def variableUse(): Unit ={
+    val variableName = stack.pop()
+    convertStack.push(findVar(variableName))
+    stack.pop()
+  }
+
+  def findVar(varName : String): String = {
+    var varDef : String = ""
+    var inScope = true
+    var found = false
+    while(!found && variableStack.nonEmpty){
+      if(variableStack.top.equalsIgnoreCase(CONSTANTS.PARAE)) inScope = false
+      if(variableStack.top.equalsIgnoreCase(CONSTANTS.PARAB)) inScope = true
+      if(variableStack.top.equalsIgnoreCase(varName) && inScope){
+        varDef = variableTemp.top
+        found = true
+      }
+      else variableTemp.push(variableStack.pop())
+    }
+    if(varDef.equals("")) {
+      println("SEMANTIC ERROR: Variable '" + varName + "' is not defined")
+      System.exit(1)
+    }
+
+    while(variableTemp.nonEmpty) variableStack.push(variableTemp.pop())
+
+    return varDef
+  }
+
   def bold(): Unit = {
     if(boldTag == 0){
-      convertStack.push("</b>")
+      convertStack.push("<b>")
       boldTag = 1
     }
     else{
-      convertStack.push("<b>")
+      convertStack.push("</b>")
       boldTag = 0
     }
   }
@@ -84,10 +135,25 @@ while(convertStack.nonEmpty) {
       tempStack.push(currentToken + " ")
       currentToken = stack.pop()
     }
+    if(currentToken.equalsIgnoreCase(CONSTANTS.BOLD)) {
+      tempStack.push("<b>")
+      currentToken = stack.pop()
+      while(!currentToken.equalsIgnoreCase(CONSTANTS.BOLD)){
+        tempStack.push(currentToken + " ")
+        currentToken = stack.pop()
+      }
+      tempStack.push("</b>")
+    }
+    while (currentToken.equalsIgnoreCase(CONSTANTS.USEB)) {
+      tempStack.push(findVar(stack.pop()) + " ")
+      stack.pop()
+      currentToken = stack.pop()
+    }
     while(tempStack.nonEmpty){
       listItem = tempStack.pop() + listItem
     }
     convertStack.push("<li>" + listItem + "</li>\n")
+    if(currentToken.equalsIgnoreCase(CONSTANTS.LISTITEM)) stack.push(currentToken)
   }
 
   def link(): Unit = {

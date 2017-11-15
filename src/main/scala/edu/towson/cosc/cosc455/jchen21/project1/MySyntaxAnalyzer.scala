@@ -15,14 +15,17 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
         parseTree()
         Compiler.Scanner.getNextToken()
+        if(!Compiler.Scanner.fileEnd()){
+          println("SYNTAX ERROR: Token found after End Tag")
+          System.exit(1)
+        }
       }
       else{
         error()
       }
-      println(stack)
     }
     else {
-      System.exit(2)
+      error()
     }
   }
 
@@ -128,7 +131,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
 
   override def body(): Unit = {
-    if(CONSTANTS.innerText.exists(x => x.equalsIgnoreCase(Compiler.currentToken))){
+    if(CONSTANTS.innerText.exists(x => x.equalsIgnoreCase(Compiler.currentToken)) || CONSTANTS.validText.exists(x => x.equalsIgnoreCase(Compiler.currentToken.substring(0, 1)))){
       innerText()
       body()
     }
