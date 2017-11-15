@@ -22,11 +22,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         }
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the End tag was expected")
+        System.exit(1)
       }
     }
     else {
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Begin tag was expected")
+      System.exit(1)
     }
   }
 
@@ -39,11 +41,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Paragraph end tag was expected")
+        System.exit(1)
       }
     }
     else{
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Paragraph begin tag was expected")
+      System.exit(1)
     }
   }
 
@@ -114,19 +118,23 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
             parseTree()
           }
           else{
-            error()
+            println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the closing parenthesis was expected")
+            System.exit(1)
           }
         }
         else{
-          error()
+          println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Opening parenthesis was expected")
+          System.exit(1)
         }
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing bracket was expected")
+        System.exit(1)
       }
     }
     else{
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Link begin tag was expected")
+      System.exit(1)
     }
   }
 
@@ -154,11 +162,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Bold tag was expected")
+        System.exit(1)
       }
     }
     else{
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Bold tag was expected")
+      System.exit(1)
     }
   }
 
@@ -176,11 +186,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
         parseTree()
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing bracket was expected")
+        System.exit(1)
       }
     }
     else{
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Title tag was expected")
+      System.exit(1)
     }
   }
 
@@ -195,11 +207,13 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
           parseTree()
         }
         else{
-          error()
+          println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing bracket tag was expected")
+          System.exit(1)
         }
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Equal sign was expected")
+        System.exit(1)
       }
       variableDefine()
     }
@@ -219,19 +233,23 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
             parseTree()
           }
           else{
-            error()
+            println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing parenthesis was expected")
+            System.exit(1)
           }
         }
         else{
-          error()
+          println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Opening parenthesis was expected")
+          System.exit(1)
         }
       }
       else{
-        error()
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing bracket was expected")
+        System.exit(1)
       }
     }
     else{
-      error()
+      println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Image tag was expected")
+      System.exit(1)
     }
   }
 
@@ -240,7 +258,9 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       parseTree()
       reqText()
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.BRACKETE)) parseTree()
-      else error()
+      else {
+        println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " was found when the Closing bracket was expected")
+        System.exit(1)}
     }
   }
 
@@ -264,7 +284,8 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       getText()
     }
     else{
-      error()
+      println("SYNTAX ERROR: Text is required")
+      System.exit(1)
     }
   }
 
@@ -286,10 +307,5 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   def parseTree(): Unit = { //pushes the current token into a stack and gets the next token
     stack.push(Compiler.currentToken)
     Compiler.Scanner.getNextToken()
-  }
-
-  def error(): Unit = {
-    println("SYNTAX ERROR: " + "'" + Compiler.currentToken + "'" + " is not supposed to be there")
-    System.exit(1)
   }
 }
