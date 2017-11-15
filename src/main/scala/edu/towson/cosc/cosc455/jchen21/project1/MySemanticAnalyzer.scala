@@ -165,7 +165,7 @@ while(convertStack.nonEmpty) {
     var fullLinkTag: String = ""
 
     while(!stack.top.equals("]")){
-      tempStack.push(stack.pop())
+      tempStack.push(stack.pop() + " ")
     }
     while(!stack.top.equals("(")){
       stack.pop()
