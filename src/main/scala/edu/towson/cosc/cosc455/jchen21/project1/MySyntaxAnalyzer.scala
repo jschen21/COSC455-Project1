@@ -6,6 +6,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
 
   var stack = Stack[String]()
 
+  //start state of the grammar
   override def gittex(): Unit = {
     if (Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCB)){
       parseTree()
@@ -15,7 +16,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
       if(Compiler.currentToken.equalsIgnoreCase(CONSTANTS.DOCE)){
         parseTree()
         Compiler.Scanner.getNextToken()
-        if(!Compiler.Scanner.fileEnd()){
+        if(!Compiler.Scanner.fileEnd()){ //checks if there is anything after the End tag
           println("SYNTAX ERROR: Token found after End Tag")
           System.exit(1)
         }
@@ -282,7 +283,7 @@ class MySyntaxAnalyzer extends SyntaxAnalyzer{
   }
 
 
-  def parseTree(): Unit = {
+  def parseTree(): Unit = { //pushes the current token into a stack and gets the next token
     stack.push(Compiler.currentToken)
     Compiler.Scanner.getNextToken()
   }
